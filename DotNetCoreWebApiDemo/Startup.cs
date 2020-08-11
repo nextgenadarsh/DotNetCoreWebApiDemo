@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNetCoreWebApiDemo.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +27,7 @@ namespace DotNetCoreWebApiDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<StudentContext>(opt => opt.UseInMemoryDatabase("StudentDb"));
             services.AddControllers();
         }
 
@@ -37,6 +40,8 @@ namespace DotNetCoreWebApiDemo
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles(); // Serves the static files from wwwroot folder eg: https://localhost:5001/Index.html
 
             app.UseRouting();
 
