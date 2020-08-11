@@ -36,14 +36,14 @@ namespace DotNetCoreWebApiDemo.Services
 
         public async Task<bool> UpdateAsync(Student updatedStudent)
         {
-            await studentCollection.ReplaceOneAsync(student => student.Id == updatedStudent.Id, updatedStudent);
-            return true;
+            var res = await studentCollection.ReplaceOneAsync(student => student.Id == updatedStudent.Id, updatedStudent);
+            return res.MatchedCount > 0;
         }
 
         public async Task<bool> DeleteAsync(string id)
         {
-            await studentCollection.DeleteOneAsync(student => student.Id == id);
-            return true;
+            var res = await studentCollection.DeleteOneAsync(student => student.Id == id);
+            return res.DeletedCount > 0;
         }
 
     }

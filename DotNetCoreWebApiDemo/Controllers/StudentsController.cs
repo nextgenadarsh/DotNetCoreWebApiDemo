@@ -53,14 +53,18 @@ namespace DotNetCoreWebApiDemo.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public IActionResult PutStudent(string id, Student student)
+        public async Task<IActionResult> PutStudentAsync(string id, Student student)
         {
             if (id != student.Id)
             {
                 return BadRequest();
             }
 
-            studentService.UpdateAsync(student);
+            var status = await studentService.UpdateAsync(student);
+            if(!status)
+            {
+                return NotFound();
+            }
 
             return NoContent();
         }

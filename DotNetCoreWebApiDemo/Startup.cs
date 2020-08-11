@@ -48,8 +48,8 @@ namespace DotNetCoreWebApiDemo
 
             // Register DbContext for StudentsDb
             services.AddDbContext<StudentContext>(opt => opt.UseInMemoryDatabase("StudentsDb"));
-            services.AddScoped<IStudentService, EfStudentService>();
-            //services.AddScoped<IStudentService, MongoDbStudentService>();
+            //services.AddScoped<IStudentService, EfStudentService>();
+            services.AddScoped<IStudentService, MongoDbStudentService>();
             services.AddControllers();
         }
 
