@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNetCoreWebApiDemo.Models;
+using DotNetCoreWebApiDemo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace DotNetCoreWebApiDemo
 {
@@ -28,6 +30,12 @@ namespace DotNetCoreWebApiDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Register Student Database Settings section
+            services.Configure<StudentDbSettings>(Configuration.GetSection(nameof(StudentDbSettings)));
+
+            // Register the instance of Student Database Settings
+            services.AddSingleton<IStudentDbSettings>(sp => sp.GetRequiredService<IOptions<StudentDbSettings>>().Value);
+
             // Enable OAuth using Auth0 Provider
             services.AddAuthentication(options =>
             {
@@ -40,6 +48,8 @@ namespace DotNetCoreWebApiDemo
 
             // Register DbContext for StudentsDb
             services.AddDbContext<StudentContext>(opt => opt.UseInMemoryDatabase("StudentsDb"));
+            services.AddScoped<IStudentService, EfStudentService>();
+            //services.AddScoped<IStudentService, MongoDbStudentService>();
             services.AddControllers();
         }
 

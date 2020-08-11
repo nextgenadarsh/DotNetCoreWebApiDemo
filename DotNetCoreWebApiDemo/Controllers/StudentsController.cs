@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using DotNetCoreWebApiDemo.Models;
 using DotNetCoreWebApiDemo.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using DotNetCoreWebApiDemo.Services;
 
 namespace DotNetCoreWebApiDemo.Controllers
 {
@@ -16,25 +17,29 @@ namespace DotNetCoreWebApiDemo.Controllers
     [Authorize]
     public class StudentsController : ControllerBase
     {
-        private readonly StudentContext _context;
+        private IStudentService studentService;
+        
 
-        public StudentsController(StudentContext context)
+        public StudentsController(IStudentService studentService)
         {
-            _context = context;
+            this.studentService = studentService;
         }
 
         // GET: api/Students
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
         {
-            return await _context.Students.Select(x => ToDto(x)).ToListAsync();
+            var students = await studentService.GetAsync();
+            return students.Select(x => ToDto(x)).ToList();
+
+            //_context.Students.Select(x => ToDto(x)).ToListAsync();
         }
 
         // GET: api/Students/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetStudent(long id)
+        public async Task<ActionResult<Student>> GetStudent(string id)
         {
-            var student = await _context.Students.FindAsync(id);
+            var student = await studentService.GetAsync(id);
 
             if (student == null)
             {
@@ -48,30 +53,14 @@ namespace DotNetCoreWebApiDemo.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent(long id, Student student)
+        public IActionResult PutStudent(string id, Student student)
         {
             if (id != student.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(student).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StudentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            studentService.UpdateAsync(student);
 
             return NoContent();
         }
@@ -82,31 +71,23 @@ namespace DotNetCoreWebApiDemo.Controllers
         [HttpPost]
         public async Task<ActionResult<Student>> PostStudent(Student student)
         {
-            _context.Students.Add(student);
-            await _context.SaveChangesAsync();
-
+            await studentService.CreateAsync(student);
+            
             return CreatedAtAction("GetStudent", new { id = student.Id }, student);
         }
 
         // DELETE: api/Students/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Student>> DeleteStudent(long id)
+        public async Task<ActionResult<Student>> DeleteStudent(string id)
         {
-            var student = await _context.Students.FindAsync(id);
-            if (student == null)
+            var status = await studentService.DeleteAsync(id);
+
+            if(!status)
             {
                 return NotFound();
             }
 
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
-
-            return student;
-        }
-
-        private bool StudentExists(long id)
-        {
-            return _context.Students.Any(e => e.Id == id);
+            return NoContent();
         }
 
         private static StudentDto ToDto(Student student) =>
