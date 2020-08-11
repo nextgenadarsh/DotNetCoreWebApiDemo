@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNetCoreWebApiDemo.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,7 +28,18 @@ namespace DotNetCoreWebApiDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<StudentContext>(opt => opt.UseInMemoryDatabase("StudentDb"));
+            // Enable OAuth using Auth0 Provider
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options => {
+                options.Authority = "https://nextgenadarsh.us.auth0.com/";
+                options.Audience = "https://localhost:5001/";
+            });
+
+            // Register DbContext for StudentsDb
+            services.AddDbContext<StudentContext>(opt => opt.UseInMemoryDatabase("StudentsDb"));
             services.AddControllers();
         }
 
@@ -45,7 +57,8 @@ namespace DotNetCoreWebApiDemo
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();    // Enables authentication capabilities
+            app.UseAuthorization();     // Enables authorization capabilities
 
             app.UseEndpoints(endpoints =>
             {

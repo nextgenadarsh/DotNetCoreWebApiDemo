@@ -6,11 +6,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DotNetCoreWebApiDemo.Models;
+using DotNetCoreWebApiDemo.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotNetCoreWebApiDemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StudentsController : ControllerBase
     {
         private readonly StudentContext _context;
@@ -22,9 +25,9 @@ namespace DotNetCoreWebApiDemo.Controllers
 
         // GET: api/Students
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
+        public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
         {
-            return await _context.Students.ToListAsync();
+            return await _context.Students.Select(x => ToDto(x)).ToListAsync();
         }
 
         // GET: api/Students/5
@@ -105,5 +108,8 @@ namespace DotNetCoreWebApiDemo.Controllers
         {
             return _context.Students.Any(e => e.Id == id);
         }
+
+        private static StudentDto ToDto(Student student) =>
+            new StudentDto { Id = student.Id, Name = student.Name };
     }
 }
