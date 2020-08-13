@@ -18,9 +18,21 @@ namespace DotNetCoreWebApiDemo
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders(); // Unregister any logging provider added by CreateDefaultBuilder
+                    logging.AddConsole();
+                    logging.AddDebug();
+                    //logging.AddEventLog(eventLogSettings =>
+                    //{
+                    //    eventLogSettings.SourceName = "DotNetCoreWebApiDemoLogSource";
+                    //});
+                    //logging.AddAzureWebAppDiagnostics();
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+            
     }
 }

@@ -14,6 +14,7 @@ namespace DotNetCoreWebApiDemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiConventionType(typeof(DefaultApiConventions))]
     [Authorize]
     public class StudentsController : ControllerBase
     {
@@ -27,6 +28,7 @@ namespace DotNetCoreWebApiDemo.Controllers
 
         // GET: api/Students
         [HttpGet]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
         {
             var students = await studentService.GetAsync();

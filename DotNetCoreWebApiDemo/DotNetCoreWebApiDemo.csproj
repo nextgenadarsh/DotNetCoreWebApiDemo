@@ -1,18 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>9857046c-ad19-40c0-bf11-78bfd0651dad</UserSecretsId>
   </PropertyGroup>
-
-
   <ItemGroup>
     <Folder Include="wwwroot\" />
     <Folder Include="Models\" />
     <Folder Include="Dtos\" />
     <Folder Include="Services\" />
+    <Folder Include="wwwroot\js\" />
+    <Folder Include="wwwroot\lib\" />
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot-secure\" />
+    <Folder Include="wwwroot\wwwroot-directory\" />
+    <Folder Include="wwwroot-external\" />
+    <Folder Include="Handlers\" />
   </ItemGroup>
-
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.6">
@@ -23,5 +28,14 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="MongoDB.Driver" Version="2.11.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="wwwroot-secure\Index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="wwwroot-secure\Index.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 </Project>
